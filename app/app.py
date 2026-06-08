@@ -1,7 +1,7 @@
-
 import streamlit as st
 import pandas as pd
 import joblib
+import plotly.graph_objects as go
 from pathlib import Path
 
 # =====================================================
@@ -13,6 +13,43 @@ st.set_page_config(
     page_icon="📊",
     layout="wide"
 )
+
+st.markdown("""
+<style>
+
+.hero {
+    background: linear-gradient(135deg,#1e293b,#334155);
+    padding: 2rem;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+.metric-card {
+    background-color: #1e293b;
+    padding: 2rem;
+    border-radius: 18px;
+    text-align: center;
+    color: white;
+    border: 1px solid #334155;
+    min-height: 150px;
+}
+}
+
+.metric-value {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #38bdf8;
+}
+}
+
+.metric-label {
+    font-size: 1rem;
+    color: #cbd5e1;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 # =====================================================
 # LOAD FILES
@@ -30,14 +67,21 @@ encoders = joblib.load(ENCODER_PATH)
 # TITLE
 # =====================================================
 
-st.title("📊 Customer Churn Prediction System")
+st.markdown("""
+<div class="hero">
 
-st.markdown(
-    """
-    Predict whether a customer is likely to churn using
-    a trained XGBoost machine learning model.
-    """
-)
+<h1>📊 Customer Churn Prediction System</h1>
+
+<p>
+Predict customer attrition using Machine Learning.
+</p>
+
+<p>
+Model: XGBoost | Industry: Telecom, Banking, SaaS
+</p>
+
+</div>
+""", unsafe_allow_html=True)
 
 # =====================================================
 # SIDEBAR INPUTS
@@ -236,7 +280,12 @@ input_df = input_df[feature_order]
 # PREDICTION
 # =====================================================
 
-if st.button("Predict Churn"):
+predict = st.sidebar.button(
+    "🚀 Predict Churn",
+    use_container_width=True
+)
+
+if predict:
 
     try:
 
@@ -245,20 +294,66 @@ if st.button("Predict Churn"):
         probability = model.predict_proba(
             input_df
         )[0][1]
+        risk = (
+            "High"
+            if probability >= 0.75
+            else "Medium"
+            if probability >= 0.40
+            else "Low"
+)
 
-        st.subheader("Prediction Result")
+        col1,col2,col3,col4 = st.columns(4)
 
-        if prediction == 1:
+        with col1:
+            st.markdown(f"""
+            <div class="metric-card">
+                <div class="metric-label">
+                    Churn Probability
+                </div>
+                <div class="metric-value">
+                    {probability:.2%}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
-            st.error(
-                f"⚠️ Customer likely to churn ({probability:.2%})"
-            )
+        with col2:
+            st.markdown(f"""
+            <div class="metric-card">
+                <div class="metric-label">
+                    Prediction
+                </div>
+                <div class="metric-value">
+                    {"Churn" if prediction == 1 else "Stay"}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
-        else:
+        with col3:
+            st.markdown(f"""
+            <div class="metric-card">
+                <div class="metric-label">
+                    Risk Level
+                </div>
+                <div class="metric-value">
+                    {risk}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+                
+        with col4:
+            st.markdown("""
+            <div class="metric-card">
+                <div class="metric-label">
+                    ROC-AUC
+                </div>
+                <div class="metric-value">
+                    0.85
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
-            st.success(
-                f"✅ Customer likely to stay ({1 - probability:.2%})"
-            )
+
+        
 
         # ==============================================
         # RISK LEVEL
@@ -284,7 +379,25 @@ if st.button("Predict Churn"):
 
         st.subheader("Churn Probability")
 
-        st.progress(float(probability))
+        fig = go.Figure(
+        go.Indicator(
+            mode="gauge+number",
+            value=probability * 100,
+            title={
+                "text": "Churn Probability (%)"
+            },
+            gauge={
+                "axis": {
+                    "range": [0, 100]
+                }
+            }
+        )
+    )
+
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
 
         st.write(
             f"Predicted churn probability: {probability:.2%}"
@@ -324,4 +437,17 @@ if st.button("Predict Churn"):
 
         st.error(f"Prediction Error: {e}")
 
+st.markdown("---")
 
+st.markdown(
+"""
+Developed using:
+
+- Python
+- XGBoost
+- Scikit-Learn
+- Streamlit
+
+End-to-End Customer Churn Prediction Project
+"""
+)
