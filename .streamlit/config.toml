@@ -1,0 +1,14 @@
+st.write("Theme:", st.get_option("theme.base"))
+
+[theme]
+base="dark"
+
+primaryColor="#d4af37"
+
+backgroundColor="#0d1117"
+
+secondaryBackgroundColor="#161b22"
+
+textColor="#e6edf3"
+
+font="sans serif"
