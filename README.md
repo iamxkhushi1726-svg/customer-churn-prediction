@@ -227,7 +227,7 @@ Low-risk customers display strong retention signals and loyalty indicators. The 
 
 ## High Risk Customer Prediction
 
-![High Risk](screenshots/highrisk.png)
+![High Risk](screenshots/high_risk_prediction.png)
 
 High-risk customers are automatically flagged and accompanied by retention recommendations such as personalized campaigns, discounts, service upgrades, and dedicated support.
 
@@ -250,7 +250,7 @@ High-risk customers are automatically flagged and accompanied by retention recom
 ### Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/customer-churn-prediction.git
+git clone https://github.com/iamxkhushi1726-svg/customer-churn-prediction.git
 ```
 
 ### Move Into Project Directory
